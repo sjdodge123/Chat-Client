@@ -1,15 +1,14 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var express = require('express')
+  , http = require('http');
+var app = express();
+var path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
 var msgLog = [];
 var clientID = 0;
 var client = {};
 var socketList = {};
-
-
-app.get('/', function(req, res){
-  res.sendfile("index.html");
-});
 
 io.on('connection', function(socket){
 	clientID++;
@@ -36,7 +35,7 @@ io.on('connection', function(socket){
 	sendBroadcast(time + ' User '+ client[socket.id] + ' has joined.');
 });
 
-http.listen(3000, function(){
+server.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
